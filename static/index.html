@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>AI Startup Assistant</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <div class="name">hello world</div>
-    <div class="name">hello world</div>
-    <div class="name">hello world</div>
-    <div class="name">hello world</div>
-    <div class="name">hello world</div>
+    <div class="modal">
+        <form id="business-idea-form">
+            <label for="textbox">Enter your business idea:</label>
+            <textarea id="business-idea" name="business-idea" rows="8" cols="70" placeholder="Zero to One..."></textarea>
+            <button type="submit" class="button">Submit</button>
+        </form>
+    </div>
+
+    <div class="background"></div>
 </body>
 </html>
