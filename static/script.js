@@ -5,7 +5,7 @@
 
     businessIdeaForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent form submission
-
+        console.log("Form submitted");
         const textAreaValue = document.querySelector('#business-idea').value;
 
         try {

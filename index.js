@@ -48,6 +48,13 @@ app.post('/api', function(req, res) {
     res.end();
 });
 
+app.post('/data', function(req, res) {
+    let input = req.body;
+    console.log(input);
+    res.status(200);
+    res.end();
+});
+
 http.listen(HTTP_PORT, function() {
     winston.info("Listening on port " + HTTP_PORT);
 });
