@@ -4,7 +4,7 @@ const fs = require('fs');
 const express = require('express');
 
 const app = express();
-const apiKey = JSON.parse(fs.readFileSync('api.json'));
+const apiKey = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
 
 console.log("KindoApi Key:" + apiKey["kindo"]);
