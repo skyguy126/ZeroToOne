@@ -14,7 +14,7 @@ const app = express();
 const apiKeys = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
 
-console.log("KindoApi Key:" + apiKeys["kindoai"]);
+winston.info("KindoApi Key: " + apiKeys["kindoai"]);
 
 // logging middleware
 app.use(morgan('short', {stream: winston.stream}));
@@ -41,9 +41,23 @@ app.use(function(req, res, next) {
 
 app.use(express.static('static')); // static file serve.
 
-app.post('/api', function(req, res) {
-    let input = req.body;
-    winston.info(input);
+app.post('/api/idea', function(req, res) {
+    //
+    // Fetch the idea inputted from screen one and
+    // store this in the db using the guid as the key
+    //
+
+    let guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/idea GUID: " + guid);
+    winston.info(JSON.stringify(req.body));
+
     res.status(200);
     res.end();
 });
