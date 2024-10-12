@@ -2,21 +2,15 @@
 
 const fs = require('fs');
 const express = require('express');
+
 const app = express();
-const http = require('http').Server(app);
-// const pino = require('pino');
-// const expressPino = require('express-pino-logger');
-
-// const logger = pino();
-// const expressLogger = expressPino({ logger });
 const apiKey = JSON.parse(fs.readFileSync('api.json'));
+const http = require('http').Server(app);
 
-console.log(apiKey["kindo"]);
-
-// app.use(expressLogger);
+console.log("KindoApi Key:" + apiKey["kindo"]);
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('static'));
 
 app.post('/api', function(req, res) {
@@ -29,4 +23,3 @@ app.post('/api', function(req, res) {
 http.listen(9999, function() {
     console.log("Listening on port 9999");
 });
-
