@@ -9,7 +9,7 @@
         const textAreaValue = document.querySelector('#business-idea').value;
 
         try {
-            const response = await fetch('/data', {
+            const response = await fetch('/api', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -27,4 +27,4 @@
             console.error('Fetch error:', error);
         }
     });
-});
+})();
