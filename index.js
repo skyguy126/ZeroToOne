@@ -7,7 +7,7 @@ const app = express();
 const apiKey = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
 
-console.log("KindoApi Key:" + apiKey["kindo"]);
+console.log("KindoApi Key:" + apiKey["kindoai"]);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
