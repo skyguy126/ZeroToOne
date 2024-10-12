@@ -10,6 +10,9 @@ var cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const winston = require('./config/winstonConfig');
 
+const axios = require('axios');
+const cors = require('cors');
+
 const app = express();
 const apiKeys = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
@@ -30,6 +33,7 @@ app.use(morgan('short', {stream: winston.stream}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors());
 
 //
 // Generate a guid everytime we visit the root page to
@@ -81,6 +85,28 @@ app.post('/api/idea', function(req, res) {
 
     res.status(200);
     res.end();
+});
+
+app.get('/getMapbox', function(req, res) {
+    res.json({ apiKey: apiKeys["mapbox"] });
+});
+
+app.get('/api/mapbox', async (req, res) => {
+    const mapboxUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12'; // Adjust URL as needed
+    const accessToken = apiKeys["mapbox"];
+
+    try {
+        const response = await axios.get(mapboxUrl, {
+            params: {
+                sdk: 'js-3.7.0',
+                access_token: accessToken
+            }
+        });
+        res.json(response.data); // Forward the data to the client
+    } catch (error) {
+        console.error('Error fetching from Mapbox:', error);
+        res.status(500).send('Error fetching data');
+    }
 });
 
 http.listen(HTTP_PORT, function() {
