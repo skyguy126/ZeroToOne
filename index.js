@@ -14,6 +14,14 @@ const app = express();
 const apiKeys = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
 
+// database stuff
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+const adapter = new FileSync('db.json');
+const db = low(adapter);
+
+db.defaults({ requests: {} }).write();
+
 winston.info("KindoApi Key: " + apiKeys["kindoai"]);
 
 // logging middleware
@@ -57,6 +65,19 @@ app.post('/api/idea', function(req, res) {
 
     winston.info("/api/idea GUID: " + guid);
     winston.info(JSON.stringify(req.body));
+
+    //
+    // Create a new db entry and associate the provided message.
+    //
+
+    let dbEntry = {
+        input: {
+            idea: req.body.message
+        }
+    }
+
+    winston.info("Storing " + guid + " " + JSON.stringify(dbEntry));
+    db.set(`requests.${guid}`, dbEntry).write();
 
     res.status(200);
     res.end();
