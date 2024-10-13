@@ -1,0 +1,19 @@
+{
+  "requests": {
+    "c4f1fc53-c842-4414-9423-2cbd68d0429f": {
+      "input": {
+        "idea": "Cleaning services",
+        "location": "Santa Monica, California, United States",
+        "businessType": "service",
+        "funding": "self-funding"
+      },
+      "output": {
+        "logos": [
+          "/logos/c4f1fc53-c842-4414-9423-2cbd68d0429f/0.png",
+          "/logos/c4f1fc53-c842-4414-9423-2cbd68d0429f/1.png",
+          "/logos/c4f1fc53-c842-4414-9423-2cbd68d0429f/2.png"
+        ]
+      }
+    }
+  }
+}
