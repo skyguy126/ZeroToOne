@@ -2,6 +2,46 @@
 
 const { spawn } = require('child_process');
 
+async function fetchOffices(location, winston) {
+
+    let data = "";
+    let dataErr = "";
+
+    winston.info("location: " + location);
+
+    console.log('python', [__dirname + "/gen_office.py", String(location).replaceAll("\"", '')]);
+    const pythonProcess = spawn('python', [__dirname + "/gen_office.py", String(location).replaceAll("\"", '')]);
+
+    // Collect data from stdout
+    pythonProcess.stdout.on('data', (chunk) => {
+        data += chunk.toString();
+    });
+
+    pythonProcess.stderr.on('data', (chunk) => {
+        dataErr += chunk.toString();
+    });
+
+    return new Promise(function(resolve, reject) {
+        pythonProcess.on('close', (code) => {
+            if (code === 0) {
+                winston.info("gen_office.py success");
+
+                // need to clean up the returned data.
+                data = data.split("assistant:")[1].trim();
+                data = JSON.parse(data);
+
+                resolve(data);
+            } else {
+                winston.error(`Process exited with code ${code}`);
+                
+                console.log(dataErr);
+                
+                reject();
+            }
+        });
+    });
+}
+
 async function fetchVcs(idea, location, winston) {
 
     let data = "";
@@ -10,7 +50,7 @@ async function fetchVcs(idea, location, winston) {
     winston.info("location: " + location);
 
     console.log('python', [__dirname + "/gen_vc.py", String(idea), String(location)]);
-    const pythonProcess = spawn('python', [__dirname + "/gen_vc.py", String(idea), location]);
+    const pythonProcess = spawn('python', [__dirname + "/gen_vc.py", String(idea), String(location)]);
 
     // Collect data from stdout
     pythonProcess.stdout.on('data', (chunk) => {
@@ -83,6 +123,7 @@ async function generateLogos(idea, guid, db, winston) {
 }
 
 module.exports = {
+    fetchOffices,
     fetchVcs,
     generateLogos
 };

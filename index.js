@@ -200,6 +200,27 @@ app.get('/api/getVcs', function(req, res) {
     });
 });
 
+app.get('/api/getOffices', function(req, res) {
+    const guid =  req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/getOffices GUID: " + guid);
+
+    let location = JSON.stringify(db.get(`requests.${guid}.input.location`));
+
+    let result = utils.fetchOffices(location, winston);
+    
+    result.then(function(data) {
+        winston.info("/api/getOffices async completed: " + JSON.stringify(data));
+        res.json(data);
+    });
+});
+
 app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
 });
