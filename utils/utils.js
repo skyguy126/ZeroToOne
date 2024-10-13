@@ -33,9 +33,9 @@ async function generateLogos(idea, guid, db, winston) {
             winston.info("image gen success");
             
             db.set(`requests.${guid}.output.logos`, [
-                "/static/logos/" + guid + "/0.png",
-                "/static/logos/" + guid + "/1.png",
-                "/static/logos/" + guid + "/2.png"
+                "/logos/" + guid + "/0.png",
+                "/logos/" + guid + "/1.png",
+                "/logos/" + guid + "/2.png"
             ]).write();
 
         } else {
