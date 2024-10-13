@@ -86,9 +86,6 @@ async function fetchVcs(idea, location, winston) {
 }
 
 async function generateLogos(idea, guid, db, winston) {
-    
-    // TODO: enable later
-    return;
 
     const outputFolderPath = __dirname + "/../static/logos/" + guid;
 
