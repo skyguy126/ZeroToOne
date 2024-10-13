@@ -31,8 +31,12 @@ async function generateLogos(idea, guid, db, winston) {
         if (code === 0) {
 
             winston.info("image gen success");
-
-            // TODO: store in db
+            
+            db.set(`requests.${guid}.output.logos`, [
+                "/static/logos/" + guid + "/0.png",
+                "/static/logos/" + guid + "/1.png",
+                "/static/logos/" + guid + "/2.png"
+            ]).write();
 
         } else {
             winston.error(`Process exited with code ${code}`);

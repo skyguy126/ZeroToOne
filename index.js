@@ -76,8 +76,11 @@ app.post('/api/idea', function(req, res) {
     let dbEntry = {
         input: {
             idea: req.body.message
+        },
+        output: {
+            logos: []
         }
-    }
+    };
 
     winston.info("Storing " + guid + " " + JSON.stringify(dbEntry));
     db.set(`requests.${guid}`, dbEntry).write();
@@ -149,11 +152,29 @@ app.get('/api/getLogos', function(req, res) {
         return;
     }
 
+    winston.info("/api/getLogos GUID: " + guid);
+
     //
     // check db to see if image paths exist, if so then return
     // otherwise return http try again.
     //
-    
+
+    let logos = JSON.stringify(db.get(`requests.${guid}.output.logos`));
+    if (logos === undefined) {
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    logos = JSON.parse(logos);
+    console.log(logos);
+
+    if (logos[0] !== undefined) {
+        res.json(logos);
+    } else {
+        res.status(500);
+        res.end();
+    }
 });
 
 app.get('/getMapbox', function(req, res) {
@@ -173,7 +194,7 @@ app.post('/api/perplexity', async (req, res) => {
         return;
     }
 
-    winston.info("/api/idea GUID: " + guid);
+    winston.info("/api/perplexity GUID: " + guid);
 
     const idea = db.get(`requests.${guid}.input.idea`);
     const businessType = db.get(`requests.${guid}.input.businessType`);
