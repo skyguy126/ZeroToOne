@@ -60,15 +60,32 @@
     }
 
     function generateImages() {
+        const imageContainer = document.querySelector(".images");
         fetch('/api/getLogos', {
             method: 'GET'
         }).then(function (res) {
+            console.log(res.status, res.statusText);
             if (res.ok) {
                 // success - update divs here
-                console.log(res);
+                console.log(JSON.stringify(res));
+                return res.json();
             } else {
+                console.log("Generating again");
                 setTimeout(generateImages, 10000);
             }
+        }).then(data => {
+            var imageUrls = Object.values(data);
+            console.log('Value from server images:', imageUrls);
+
+            // set divs here
+            for (let i=0; i < imageUrls.length; i++) {
+                const img = document.createElement('img');
+                img.src = imageUrls[i];
+                imageContainer.appendChild(img);
+            }
+        })
+        .catch(error => {
+            console.error('Fetch error:', error);
         });
     }
 })();

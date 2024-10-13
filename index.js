@@ -159,6 +159,7 @@ app.get('/api/getLogos', function(req, res) {
     // otherwise return http try again.
     //
 
+    db.read();
     let logos = JSON.stringify(db.get(`requests.${guid}.output.logos`));
     if (logos === undefined) {
         res.status(400);
