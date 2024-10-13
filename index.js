@@ -181,11 +181,7 @@ app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
 });
 
-app.get('/getPerplexity', function(req, res) {
-    res.json({ apiKey: apiKeys["perplexity"] });
-});
-
-app.post('/api/perplexity', async (req, res) => {    
+app.post('/api/perplexityVcQuery', async (req, res) => {    
     let guid = req.cookies.guid;
     if (!guid) {
         winston.error("Missing guid cookie!");
@@ -194,7 +190,7 @@ app.post('/api/perplexity', async (req, res) => {
         return;
     }
 
-    winston.info("/api/perplexity GUID: " + guid);
+    winston.info("/api/perplexityVcQuery GUID: " + guid);
 
     const idea = db.get(`requests.${guid}.input.idea`);
     const businessType = db.get(`requests.${guid}.input.businessType`);

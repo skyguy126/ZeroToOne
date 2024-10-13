@@ -37,7 +37,7 @@
         let prompt = "I am launching a businessType business for the following idea: businessIdea. I am going to fund it with businessFunding. Show me a numbered list of venture capitalist firms related to my business in businessLocation. Give me this list and nothing else, and don't say anything before that. I just want the numbered list of VCs and nothing else. Also this list needs to be in html format, format it in html code please.";
 
         try {
-            const response = await fetch('/api/perplexity', {
+            const response = await fetch('/api/perplexityVcQuery', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
