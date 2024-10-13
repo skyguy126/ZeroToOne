@@ -61,7 +61,7 @@ class CustomChatModelAdvanced(BaseChatModel):
             {"role": role_map[m.type], "content": m.content} for m in messages
         ]
 
-        data = {"model": self.model_name, "messages": api_messages}
+        data = {"model": self.model_name, "messages": api_messages, "temperature": 0.01}
 
         # print("\n\n\n")
         # print(json.dumps(data))
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    prompt = "Generate a list of VCs near " + args.location + " that would fund a " + args.idea + " business. Loosely take note of the location " + args.location + ", and give reasoning as to why each VC would be a good fit."
+    prompt = "Generate a list of VCs near " + args.location + " to fund a " + args.idea + " business. Take note of the location " + args.location + " and give reasoning as to why each VC would be a good fit."
 
     sllm = llm.as_structured_llm(output_cls=VCQuery)
     input_msg = ChatMessage.from_str(prompt)

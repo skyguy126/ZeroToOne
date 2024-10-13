@@ -61,7 +61,7 @@ class CustomChatModelAdvanced(BaseChatModel):
             {"role": role_map[m.type], "content": m.content} for m in messages
         ]
 
-        data = {"model": self.model_name, "messages": api_messages}
+        data = {"model": self.model_name, "messages": api_messages, "temperature": 0.1}
 
         # print("\n\n\n")
         # print(json.dumps(data))
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    prompt = "Generate a list of available office spaces in " + args.location + ". Fetch the name, location, rent per month, and square footage."
+    prompt = "Generate a few for-lease office spaces near " + args.location + ". Fetch the name, location, rent per month, and square footage. If some data is unavailable, mark the field with the string 'n/a'."
 
     sllm = llm.as_structured_llm(output_cls=OfficeSpaces)
     input_msg = ChatMessage.from_str(prompt)
