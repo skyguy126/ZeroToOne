@@ -25,6 +25,7 @@ from langchain_core.messages import (
     SystemMessage,
     ToolMessage,
 )
+
 import requests
 import json
 import sys
@@ -111,6 +112,70 @@ resp = llm.chat(messages)
 print(resp)
 '''
 
+# do the actual kindo model query
+from pydantic import BaseModel, Field
+
+class LogoPromptGen(BaseModel):
+    prompt: str
+
+sllm = llm.as_structured_llm(output_cls=LogoPromptGen)
+
+# connect to pinecone instance for RAG
+import openai
+from pinecone import Pinecone, ServerlessSpec
+
+client = openai.OpenAI(api_key=apiKeys['openai'])
+pc = Pinecone(api_key=apiKeys['pinecone'])
+
+index_name = "stable-diffusion-prompts"
+index = pc.Index(index_name)
+
+def get_embedding(prompt):
+    response = client.embeddings.create(
+        input=prompt,
+        model="text-embedding-ada-002"
+    )
+
+    return response.data[0].embedding
+
+def query_pinecone(idea, top_k=5):
+    idea_vector = get_embedding(idea)
+    result = index.query(vector=idea_vector, top_k=top_k, include_metadata=True)
+    return [match['metadata']['prompt'] for match in result['matches']]
+
+def query_openai_with_llamaindex_and_custom_model(idea, top_k=5):
+    # Step 1: Query Pinecone to get similar prompts
+    similar_prompts = query_pinecone(idea, top_k=top_k)
+
+    # Step 2: Create LlamaIndex document from similar prompts
+    context_text = "\n".join(similar_prompts)
+
+    # Step 3: Use your custom model with the Pinecone context as input
+    input_msg = ChatMessage.from_str(
+        f"Write a logo generation prompt with less than 15 words for the Stable Diffusion model, "
+        f"that emphasizes {idea}. Make sure the logo is extremely simple and uses pastel colors."
+        f"Here is some context on how good stable diffusion prompts are structured: {context_text}"
+    )
+
+    print("input_msg", input_msg)
+
+    # Call your structured LLM to generate the final prompt
+    output = sllm.chat([input_msg])
+
+    # Step 6: Extract and return the generated prompt
+    output_obj = output.raw
+    generated_prompt = output_obj['prompt'] if 'prompt' in output_obj else str(output)
+
+    return generated_prompt
+
+# Example usage
+new_idea = "Flower pot business that sells exotic Asian clays"
+response = query_openai_with_llamaindex_and_custom_model(new_idea)
+
+print("Generated Prompt:", response)
+
+'''
+# do the actual kindo model query
 from pydantic import BaseModel, Field
 
 class LogoPromptGen(BaseModel):
@@ -124,3 +189,4 @@ output_obj = output.raw
 
 print(str(output))
 print(output_obj)
+'''
