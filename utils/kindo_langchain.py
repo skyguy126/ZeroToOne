@@ -27,10 +27,15 @@ from langchain_core.messages import (
 )
 import requests
 import json
+import sys
+
+apiKeys = {}
+with open('../apikeys.json', 'r') as f:
+    apiKeys = json.loads(f.read())
 
 url = "https://llm.kindo.ai/v1/chat/completions"
 headers = {
-    "api-key": "0641ebd6-87f1-4d38-88f3-bb09871b9cbe-2217d4f8336c364f",
+    "api-key": apiKeys['kindoai'],
     "content-type": "application/json",
 }
 
