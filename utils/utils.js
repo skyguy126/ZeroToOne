@@ -3,6 +3,9 @@
 const { spawn } = require('child_process');
 
 async function generateLogos(idea, guid, db, winston) {
+    
+    // TODO: disable
+    return;
 
     const outputFolderPath = __dirname + "/../static/logos/" + guid;
 
