@@ -93,25 +93,6 @@ app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
 });
 
-app.get('/api/mapbox', async (req, res) => {
-    const mapboxUrl = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12'; // Adjust URL as needed
-    const accessToken = apiKeys["mapbox"];
-
-    try {
-        const response = await axios.get(mapboxUrl, {
-            params: {
-                sdk: 'js-3.7.0',
-                access_token: accessToken
-            }
-        });
-
-        res.json(response.data); // Forward the data to the client
-    } catch (error) {
-        winston.error('Error fetching from Mapbox:' + error);
-        res.status(500).send('Error fetching data');
-    }
-});
-
 http.listen(HTTP_PORT, function() {
     winston.info("Listening on port " + HTTP_PORT);
 });
