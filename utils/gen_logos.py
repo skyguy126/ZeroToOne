@@ -202,7 +202,7 @@ print("raw_prompt_json:", json.dumps(raw_prompt_json))
 # print("raw_prompt_json:", json.dumps(raw_prompt_json))
 
 # create new folder to store the logos by guid
-new_path = "../static/" + args.guid
+new_path = "../static/logos" + args.guid
 if not os.path.exists(new_path):
     os.makedirs(new_path)
 
