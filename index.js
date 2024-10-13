@@ -9,8 +9,6 @@ var cookieParser = require('cookie-parser');
 
 const morgan = require('morgan');
 const winston = require('./config/winstonConfig');
-
-const axios = require('axios');
 const cors = require('cors');
 
 const app = express();
@@ -102,9 +100,10 @@ app.get('/api/mapbox', async (req, res) => {
                 access_token: accessToken
             }
         });
+
         res.json(response.data); // Forward the data to the client
     } catch (error) {
-        console.error('Error fetching from Mapbox:', error);
+        winston.error('Error fetching from Mapbox:' + error);
         res.status(500).send('Error fetching data');
     }
 });
