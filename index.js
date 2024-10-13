@@ -179,7 +179,7 @@ app.get('/api/getLogos', function(req, res) {
 });
 
 app.get('/api/getVcs', function(req, res) {
-    const guid = req.cookies.guid;
+    const guid = "c4f1fc53-c842-4414-9423-2cbd68d0429f";// req.cookies.guid;
     if (!guid) {
         winston.error("Missing guid cookie!");
         res.status(400);
@@ -201,7 +201,7 @@ app.get('/api/getVcs', function(req, res) {
 });
 
 app.get('/api/getOffices', function(req, res) {
-    const guid =  req.cookies.guid;
+    const guid = "c4f1fc53-c842-4414-9423-2cbd68d0429f";// req.cookies.guid;
     if (!guid) {
         winston.error("Missing guid cookie!");
         res.status(400);
@@ -218,6 +218,51 @@ app.get('/api/getOffices', function(req, res) {
     result.then(function(data) {
         winston.info("/api/getOffices async completed: " + JSON.stringify(data));
         res.json(data);
+    });
+});
+
+app.get('/api/getSummary', function(req, res) {
+    const guid = "c4f1fc53-c842-4414-9423-2cbd68d0429f";// req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/getSummary GUID: " + guid);
+
+    let idea = JSON.stringify(db.get(`requests.${guid}.input.idea`));
+    let location = JSON.stringify(db.get(`requests.${guid}.input.location`));
+    let prompt = "Given a new business idea: " + String(idea).replaceAll("\"", '') + " based in " + String(location).replaceAll("\"", '') + ", generate a short blurb about current competition in the space. Also generate a short blurb about approximate funding similar startups were able to receive from VCs. Source data from Crunchbase. Keep the entire response under 4 short sentences.";
+    
+    winston.info(prompt);
+
+    axios.post('https://api.perplexity.ai/chat/completions', {
+        model: 'llama-3.1-sonar-small-128k-chat',
+        messages: [
+            {
+                role: 'user',
+                content: prompt
+            }
+        ],
+        temperature: 0.1, // Adjust temperature for creativity
+    }, {
+        headers: {
+            'Authorization': `Bearer ${apiKeys['perplexity']}`,
+            'Content-Type': 'application/json',
+        },
+    })
+    .then(response => {
+        const message = response.data.choices[0].message.content;
+        winston.info(message);
+
+        res.json({message: message});
+    })
+    .catch(error => {
+        winston.error(error.message);
+        res.status(500);
+        res.end()
     });
 });
 
@@ -255,7 +300,7 @@ app.post('/api/perplexityVcQuery', async (req, res) => {
             'Content-Type': 'application/json',
         },
         data: {
-            model: 'llama-3.1-sonar-small-128k-online',
+            model: 'llama-3.1-sonar-small-128k-chat',
             messages: [
                 { role: 'user', content: userQuery }
             ],
