@@ -6,6 +6,30 @@
     const businessQuestionsForm = document.querySelector("#business-questions-form");
     const page1 = document.querySelector(".page1");
 
+    async function successCallback(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log("lat and lon ", latitude, longitude);
+        await generateMap(latitude, longitude);
+    }
+
+    function errorCallback(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                document.getElementById('location').textContent = "User denied the request for Geolocation.";
+                break;
+            case error.POSITION_UNAVAILABLE:
+                document.getElementById('location').textContent = "Location information is unavailable.";
+                break;
+            case error.TIMEOUT:
+                document.getElementById('location').textContent = "The request to get user location timed out.";
+                break;
+            case error.UNKNOWN_ERROR:
+                document.getElementById('location').textContent = "An unknown error occurred.";
+                break;
+        }
+    }
+    
     // expand textbox on click
     businessIdeaInput.addEventListener('click', function() {
         businessIdeaInput.classList.add('expanded');
@@ -29,7 +53,13 @@
                 console.log('Success');
                 showSecondPage();
                 page1.classList.add('hide');
-                await generateMap();
+                document.querySelector('.overlay').classList.add('hide');
+                document.body.style.setProperty('--background-image', 'none');
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+                } else {
+                    console.log("Geolocation is not supported by this browser.");
+                }
             } else {
                 console.error('Error:', response.statusText);
             }
@@ -88,13 +118,13 @@
             });
     }
 
-    async function generateMap() {
+    async function generateMap(lat, lon) {
         mapboxgl.accessToken = await fetchMapboxAPIKey();
         console.log("access token ", mapboxgl.accessToken);
         const map = new mapboxgl.Map({
             container: 'map',
             zoom: 12.5,
-            center: [-77.01866, 38.888],
+            center: [lon, lat],
             // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
             style: 'mapbox://styles/mapbox/streets-v12',
             cooperativeGestures: true
@@ -106,7 +136,7 @@
             draggable: true,
             color: '#bd0f29'
         })
-            .setLngLat([-77.01866, 38.888])
+            .setLngLat([lon, lat])
             .addTo(map);
 
         marker.on('dragend', await onDragEnd);

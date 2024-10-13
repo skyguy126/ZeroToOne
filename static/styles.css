@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Muli:wght@400;700&display=swap');
+
 /***************** Common styles **************/
 .hide {
     display: none !important;
@@ -15,16 +17,34 @@ body {
     width: 100vw;
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Muli', sans-serif;
+    --background-image: url('images/background.jpg');
 }
 
-.background {
-    height: 100vh;
-    width: 100vw;
-    background-color: gray;
-    z-index: -1;
-    opacity: 70%;
-    position: absolute;
+body::before {
+    content: '';
+    position: absolute; /* Position the overlay */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    background-image: var(--background-image); /* Background image */
+    background-size: cover; /* Cover the entire body */
+    background-repeat: no-repeat; /* Prevent repeating */
+    background-position: center; /* Center the image */
+    z-index: 0; /* Stack the image below the overlay */
+    opacity: 0.6;
+}
+
+.overlay {
+    background-color: rgb(44, 117, 213);
+    position: absolute; /* Position the overlay */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    z-index: 1;
+    opacity: 0.8;
 }
 
 .page1 {
@@ -62,6 +82,7 @@ form {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
 .textbox-flex {
@@ -82,7 +103,7 @@ textarea, input, select {
     font-size: 18px;
     padding: 15px 25px;
     border-radius: 50px;
-    opacity: 0.7;
+    opacity: 0.8;
     min-width: 200px;
     border: 2px solid #acacac;
     width: 100%;
