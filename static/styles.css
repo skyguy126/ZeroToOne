@@ -1,3 +1,7 @@
+html {
+    box-sizing: border-box;
+}
+
 body {
     display: flex;
     align-items: center;
@@ -18,11 +22,44 @@ body {
     position: absolute;
 }
 
+.page1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.page2 {
+    display: none;
+}
+
+.page2.show {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.page2.show > * {
+    height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+
+.questions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
 form {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+}
+
+form#business-questions-form {
+    width: 60%;
 }
 
 .modal {
@@ -33,26 +70,31 @@ form {
     justify-content: center;
     align-items: center;
     border-radius: 5px;
-    box-shadow: 2px 2px 2px 2px gray;
+    box-shadow: 0px 0px 5px 0px gray;
     z-index: 1;
     background-color: white;
 }
 
-modal.closed {
+.modal.closed {
     display: none;
 }
 
 label {
-    opacity: 0.7;
+    opacity: 0.6;
+    margin-top: 10px;
 }
 
-textarea {
+textarea, input {
     font-family: Arial, Helvetica, sans-serif;
     margin: 10px 0;
     padding: 8px;
     border-radius: 5px;
     resize: both;
     opacity: 0.7;
+    min-width: 200px;
+    border: 1px solid #acacac;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 textarea:hover {
@@ -80,4 +122,23 @@ textarea:hover {
 .button:active {
 	position:relative;
 	top:1px;
+}
+
+/************* Map styles *************/
+.mapcontainer {
+    padding-right: 20px;
+    position: relative;
+}
+
+.map {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.marker {
+    position: absolute;
+    transform: translate(-50%, -50%); /* Center the marker */
+    pointer-events: none; /* Prevent interaction with the marker */
+    z-index: 1;
 }

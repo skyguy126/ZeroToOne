@@ -85,6 +85,10 @@ app.post('/api/idea', function(req, res) {
     res.end();
 });
 
+app.post('/api/location', function(req, res) {
+    winston.info("City name " + JSON.stringify(req.body.city));
+});
+
 app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
 });
