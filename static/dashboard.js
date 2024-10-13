@@ -3,6 +3,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         getVCDataFromPerplexity();
+        setTimeout(generateImages, 10);
     });
 
     function extractList(htmlString) {
@@ -56,5 +57,18 @@
         } catch (error) {
             console.error('Fetch error:', error);
         }
+    }
+
+    function generateImages() {
+        fetch('/api/getLogos', {
+            method: 'GET'
+        }).then(function (res) {
+            if (res.ok) {
+                // success - update divs here
+                console.log(res);
+            } else {
+                setTimeout(generateImages, 10000);
+            }
+        });
     }
 })();
