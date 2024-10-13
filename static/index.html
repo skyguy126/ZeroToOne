@@ -7,18 +7,21 @@
     <link rel="stylesheet" href="styles.css">
     <script defer src="script.js"></script>
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.7.0/mapbox-gl.js"></script>
+    <script src="https://kit.fontawesome.com/1b3db36b24.js" crossorigin="anonymous"></script>
+
+    <!-- Form library -->
+
 </head>
 <body>
     <div class="page1">
-        <div class="modal">
-            <form id="business-idea-form">
-                <label for="textbox">Enter your business idea:</label>
-                <textarea id="business-idea" name="business-idea" rows="8" cols="70" placeholder="Zero to One..."></textarea>
-                <button type="submit" class="button">Submit</button>
-            </form>
-        </div>
-        <div class="background"></div>
+        <form id="business-idea-form">
+            <div class="textbox-flex">
+                <textarea id="business-idea" name="business-idea" rows="1" cols="70" placeholder="Zero to One..."></textarea>
+                <button type="submit" id="business-idea-submit"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </form>
     </div>
 
     <div class="page2">
@@ -28,20 +31,37 @@
         </div>
         <div class="questions">
             <form id="business-questions-form">
-                <h3>Answer some more questions:</h3>
-                <label for="username">Age range:</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
-        
-                <label for="email">Some other question:</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required>
-
-                <label for="password">Some other question:</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-
-                <label for="textbox">Enter your business idea:</label>
-                <textarea id="some other input" name="some other input" rows="8" placeholder="Type message here..."></textarea>
-
-                <button type="submit" class="button">Submit</button>
+                <div class="select">
+                    <select name="businesstype" id="businesstype">
+                        <option value="" disabled selected>Type of Business</option>
+                        <option value="retail">Retail</option>
+                        <option value="service">Service</option>
+                        <option value="online">Online</option>
+                        <option value="food">Food</option>
+                        <option value="tech">Tech</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <!-- <div class="money">
+                    <input type="number" id="budget" name="budget" placeholder="Estimated budget" required>
+                    <div class="dollarsign"><i class="fa-solid fa-dollar-sign"></i></div>
+                </div>
+                <div class="money">
+                    <input type="number" id="revenue" name="revenue" placeholder="Target Revenue" required>
+                    <div class="dollarsign"><i class="fa-solid fa-dollar-sign"></i></div>
+                </div> -->
+                <div class="select">
+                    <select name="funding" id="funding">
+                        <option value="" disabled selected>Funding options</option>
+                        <option value="retail">Loans</option>
+                        <option value="service">Self-funding</option>
+                        <option value="online">Crownfunding</option>
+                        <option value="other">Other</option>
+                    </select>
+                    <div class="arrow"><i class="fa-solid fa-chevron-down"></i></div>
+                </div>
+                <button type="submit" class="submit">Submit</button>
             </form>
         </div>
     </div>

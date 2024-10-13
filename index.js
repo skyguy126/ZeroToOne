@@ -85,8 +85,47 @@ app.post('/api/idea', function(req, res) {
     res.end();
 });
 
+app.post('/api/extrainfo', function(req, res) {
+    let guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/idea GUID: " + guid);
+    winston.info(JSON.stringify(req.body));
+
+    db.set(`requests.${guid}.input.businessType`, req.body.businesstype).write();
+    db.set(`requests.${guid}.input.funding`, req.body.funding).write();
+    
+    // target revenue
+    // city (from map)
+    // Type of business (dropdown)
+    // estimated startup budget
+    // how will you fund your startup? loans, self-funding, crowdfunding, etc
+
+    res.status(200);
+    res.end();
+});
+
 app.post('/api/location', function(req, res) {
-    winston.info("City name " + JSON.stringify(req.body.city));
+    let guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/location GUID: " + guid);
+    winston.info(JSON.stringify(req.body));
+
+    db.set(`requests.${guid}.input.city`, req.body.city).write();
+
+    res.status(200);
+    res.end();
 });
 
 app.get('/getMapbox', function(req, res) {

@@ -2,10 +2,18 @@
     'use strict';
 
     const businessIdeaForm = document.querySelector("#business-idea-form");
+    const businessIdeaInput = document.querySelector("#business-idea");
+    const businessQuestionsForm = document.querySelector("#business-questions-form");
+    const page1 = document.querySelector(".page1");
+
+    // expand textbox on click
+    businessIdeaInput.addEventListener('click', function() {
+        businessIdeaInput.classList.add('expanded');
+    });
 
     businessIdeaForm.addEventListener('submit', async (event) => {
         event.preventDefault(); // Prevent form submission
-        console.log("Form submitted");
+        
         const textAreaValue = document.querySelector('#business-idea').value;
 
         try {
@@ -19,8 +27,8 @@
 
             if (response.ok) {
                 console.log('Success');
-                closeModal();
                 showSecondPage();
+                page1.classList.add('hide');
                 await generateMap();
             } else {
                 console.error('Error:', response.statusText);
@@ -30,12 +38,31 @@
         }
     });
 
-    function closeModal() {
-        const modal = document.querySelector(".modal");
-        const background = document.querySelector(".background");
-        modal.classList.add('closed');
-        background.style.display = 'none';
-    }
+    businessQuestionsForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        const businessTypeValue = document.querySelector('#businesstype').value;
+        const fundingValue = document.querySelector('#funding').value;
+
+        try {
+            const response = await fetch('/api/extrainfo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ businesstype: businessTypeValue, funding: fundingValue })
+            });
+
+            if (response.ok) {
+                console.log('Success');
+                window.location.href = 'dashboard.html';
+            } else {
+                console.error('Error:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Fetch error:', error);
+        }
+    })
 
     function showSecondPage() {
         const page2 = document.querySelector('.page2');
@@ -75,7 +102,8 @@
         map.addControl(new mapboxgl.NavigationControl());
 
         const marker = new mapboxgl.Marker({
-            draggable: true
+            draggable: true,
+            color: '#bd0f29'
         })
             .setLngLat([-77.01866, 38.888])
             .addTo(map);
