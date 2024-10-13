@@ -55,6 +55,7 @@
                 page1.classList.add('hide');
                 document.querySelector('.overlay').classList.add('hide');
                 document.body.style.setProperty('--background-image', 'none');
+                document.querySelector('#business-idea').value = '';
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
                 } else {
@@ -86,6 +87,8 @@
             if (response.ok) {
                 console.log('Success');
                 window.location.href = 'dashboard.html';
+                document.querySelector('#businesstype').value = '';
+                document.querySelector('#funding').value = '';
                 getVCData();
             } else {
                 console.error('Error:', response.statusText);
