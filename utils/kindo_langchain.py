@@ -152,12 +152,12 @@ def query_openai_with_llamaindex_and_custom_model(idea, top_k=5):
 
     # Step 3: Use your custom model with the Pinecone context as input
     input_msg = ChatMessage.from_str(
-        f"Write a logo generation prompt with less than 15 words for the Stable Diffusion model, "
+        f"Write a logo generation prompt with less than 50 words for the Stable Diffusion model, "
         f"that emphasizes {idea}. Make sure the logo is extremely simple and uses pastel colors."
         f"Here is some context on how good stable diffusion prompts are structured: {context_text}"
     )
 
-    print("input_msg", input_msg)
+    # print("input_msg", input_msg)
 
     # Call your structured LLM to generate the final prompt
     output = sllm.chat([input_msg])
@@ -168,25 +168,70 @@ def query_openai_with_llamaindex_and_custom_model(idea, top_k=5):
 
     return generated_prompt
 
-# Example usage
-new_idea = "Flower pot business that sells exotic Asian clays"
-response = query_openai_with_llamaindex_and_custom_model(new_idea)
+import argparse, os
 
-print("Generated Prompt:", response)
+parser = argparse.ArgumentParser(description="Generate logos.")
 
-'''
-# do the actual kindo model query
-from pydantic import BaseModel, Field
+# Add the arguments
+parser.add_argument("prompt", type=str, help="prompt")
+parser.add_argument("guid", type=str, help="guid")
 
-class LogoPromptGen(BaseModel):
-    prompt: str
+# Parse the arguments
+args = parser.parse_args()
 
-sllm = llm.as_structured_llm(output_cls=LogoPromptGen)
-input_msg = ChatMessage.from_str("Write a logo generation prompt for the Stable Diffusion model, that emphasizes simplicity, pastel colors, and the business idea.")
-output = sllm.chat([input_msg])
+# Access and print the inputs
+# print(f"First input: {args.prompt}")
+# print(f"Second input: {args.guid}")
 
-output_obj = output.raw
+response = query_openai_with_llamaindex_and_custom_model(args.prompt)
+raw_prompt_json = json.loads(response.split("assistant: ")[1])
 
-print(str(output))
-print(output_obj)
-'''
+print("raw_prompt_json:", json.dumps(raw_prompt_json))
+
+# input: business idea, GUID
+# output: create GUID name folder in logos in static and gen 3 images
+# line style, low poly, and one more style
+
+# negative prompt for stable diffusion
+# photorealism, humans, complexity, complex
+
+# new_idea = "AI powered phone call customer service for small farms"
+# response = query_openai_with_llamaindex_and_custom_model(new_idea)
+
+# raw_prompt_json = json.loads(response.split("assistant: ")[1])
+# print("raw_prompt_json:", json.dumps(raw_prompt_json))
+
+# create new folder to store the logos by guid
+new_path = "../static/" + args.guid
+if not os.path.exists(new_path):
+    os.makedirs(new_path)
+
+
+# call into stability ai
+stability_ai_apikey = "Bearer " + apiKeys['stablediffusion']
+
+for i, style in enumerate(['low-poly', 'line-art', 'digital-art']):
+    print("Generating", i, style)
+
+    response = requests.post(
+        f"https://api.stability.ai/v2beta/stable-image/generate/core",
+        headers={
+            "authorization": stability_ai_apikey,
+            "accept": "image/*"
+        },
+        files={"none": ''},
+        data={
+            "prompt": raw_prompt_json["prompt"],
+            "output_format": "png",
+            "negative_prompt": "photorealism, humans, complexity, complex",
+            "style_preset": "low-poly"
+        },
+    )
+
+    save_path = new_path + "/" + str(i) + ".png"
+
+    if response.status_code == 200:
+        with open(save_path, 'wb') as file:
+            file.write(response.content)
+    else:
+        print(str(response.json()))
