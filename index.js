@@ -178,6 +178,28 @@ app.get('/api/getLogos', function(req, res) {
     }
 });
 
+app.get('/api/getVcs', function(req, res) {
+    const guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/getVcs GUID: " + guid);
+
+    let idea = JSON.stringify(db.get(`requests.${guid}.input.idea`));
+    let location = JSON.stringify(db.get(`requests.${guid}.input.location`));
+
+    let result = utils.fetchVcs(idea, location, winston);
+    
+    result.then(function(data) {
+        winston.info("/api/getVcs async completed: " + JSON.stringify(data));
+        res.json(data);
+    });
+});
+
 app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
 });

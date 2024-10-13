@@ -2,6 +2,39 @@
 
 const { spawn } = require('child_process');
 
+async function fetchVcs(idea, location, winston) {
+
+    let data = "";
+
+    winston.info("idea: " + idea);
+    winston.info("location: " + location);
+
+    console.log('python', [__dirname + "/gen_vc.py", String(idea), String(location)]);
+    const pythonProcess = spawn('python', [__dirname + "/gen_vc.py", String(idea), location]);
+
+    // Collect data from stdout
+    pythonProcess.stdout.on('data', (chunk) => {
+        data += chunk.toString();
+    });
+
+    return new Promise(function(resolve, reject) {
+        pythonProcess.on('close', (code) => {
+            if (code === 0) {
+                winston.info("vc_gen.py success");
+
+                // need to clean up the returned data.
+                data = data.split("assistant:")[1].trim();
+                data = JSON.parse(data);
+
+                resolve(data);
+            } else {
+                winston.error(`Process exited with code ${code}`);
+                reject();
+            }
+        });
+    });
+}
+
 async function generateLogos(idea, guid, db, winston) {
     
     // TODO: enable later
@@ -50,5 +83,6 @@ async function generateLogos(idea, guid, db, winston) {
 }
 
 module.exports = {
+    fetchVcs,
     generateLogos
 };

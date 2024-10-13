@@ -32,7 +32,7 @@ import sys
 
 apiKeys = None
 # TODO: change this path when invoking from node
-with open('../apikeys.json', 'r') as f:
+with open('./apikeys.json', 'r') as f:
     apiKeys = json.loads(f.read())
 
 url = "https://api.perplexity.ai/chat/completions"
