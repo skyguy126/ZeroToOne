@@ -34,6 +34,7 @@ async function fetchOffices(location, winston) {
             } else {
                 winston.error(`Process exited with code ${code}`);
                 
+                console.log(data);
                 console.log(dataErr);
                 
                 reject();
@@ -45,6 +46,7 @@ async function fetchOffices(location, winston) {
 async function fetchVcs(idea, location, winston) {
 
     let data = "";
+    let dataErr = "";
 
     winston.info("idea: " + idea);
     winston.info("location: " + location);
@@ -55,6 +57,10 @@ async function fetchVcs(idea, location, winston) {
     // Collect data from stdout
     pythonProcess.stdout.on('data', (chunk) => {
         data += chunk.toString();
+    });
+
+    pythonProcess.stderr.on('data', (chunk) => {
+        dataErr += chunk.toString();
     });
 
     return new Promise(function(resolve, reject) {
@@ -69,6 +75,10 @@ async function fetchVcs(idea, location, winston) {
                 resolve(data);
             } else {
                 winston.error(`Process exited with code ${code}`);
+
+                console.log(data);
+                console.log(dataErr);
+                
                 reject();
             }
         });
