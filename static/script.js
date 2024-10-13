@@ -56,6 +56,7 @@
             if (response.ok) {
                 console.log('Success');
                 window.location.href = 'dashboard.html';
+                getVCData();
             } else {
                 console.error('Error:', response.statusText);
             }
@@ -112,9 +113,9 @@
 
         async function onDragEnd() {
             const lngLat = marker.getLngLat();
-            const cityName = await reverseGeocode(lngLat.lng, lngLat.lat, mapboxgl.accessToken);
-            console.log("City ", cityName);
-            sendCityToApi(cityName);
+            const location = await reverseGeocode(lngLat.lng, lngLat.lat, mapboxgl.accessToken);
+            console.log("Place name ", location);
+            sendCityToApi(location);
         }
     }
 
@@ -125,20 +126,23 @@
         const data = await response.json();
         if (data.features && data.features.length > 0) {
             const dataFeature = data.features.find(feature => feature.place_type[0] === "place");
-            return dataFeature.text;
+            if (!dataFeature) {
+                return 'Location not found';
+            }
+            return dataFeature.place_name;
         } else {
             return 'Location not found';
         }
     }
 
-    async function sendCityToApi(city) {
+    async function sendCityToApi(location) {
         try {
             const response = await fetch('/api/location', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ city: city })
+                body: JSON.stringify({ location: location })
             });
 
             if (response.ok) {

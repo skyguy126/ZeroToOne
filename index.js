@@ -10,6 +10,7 @@ var cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const winston = require('./config/winstonConfig');
 const cors = require('cors');
+const axios = require('axios');
 
 const app = express();
 const apiKeys = JSON.parse(fs.readFileSync('apikeys.json'));
@@ -92,7 +93,7 @@ app.post('/api/extraInfo', function(req, res) {
         return;
     }
 
-    winston.info("/api/extraInfo GUID: " + guid);
+    winston.info("/api/extrainfo GUID: " + guid);
     winston.info(JSON.stringify(req.body));
 
     //
@@ -101,12 +102,12 @@ app.post('/api/extraInfo', function(req, res) {
 
     db.set(`requests.${guid}.input.businessType`, req.body.businesstype).write();
     db.set(`requests.${guid}.input.funding`, req.body.funding).write();
-
-    //
-    // This is the last API call so at this point we
-    // have all of the information we need to start
-    // generating.
-    //
+    
+    // target revenue
+    // location (from map)
+    // Type of business (dropdown)
+    // estimated startup budget
+    // how will you fund your startup? loans, self-funding, crowdfunding, etc
 
     res.status(200);
     res.end();
@@ -128,7 +129,7 @@ app.post('/api/location', function(req, res) {
     winston.info("/api/location GUID: " + guid);
     winston.info(JSON.stringify(req.body));
 
-    db.set(`requests.${guid}.input.city`, req.body.city).write();
+    db.set(`requests.${guid}.input.location`, req.body.location).write();
 
     res.status(200);
     res.end();
@@ -136,6 +137,73 @@ app.post('/api/location', function(req, res) {
 
 app.get('/getMapbox', function(req, res) {
     res.json({ apiKey: apiKeys["mapbox"] });
+});
+
+app.get('/getPerplexity', function(req, res) {
+    res.json({ apiKey: apiKeys["perplexity"] });
+});
+
+app.post('/api/perplexity', async (req, res) => {    
+    let guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    winston.info("/api/idea GUID: " + guid);
+
+    const idea = db.get(`requests.${guid}.input.idea`);
+    const businessType = db.get(`requests.${guid}.input.businessType`);
+    const funding = db.get(`requests.${guid}.input.businessType`);
+    const location = db.get(`requests.${guid}.input.location`);
+
+    const prompt = req.body.prompt;
+
+    const userQuery = prompt.replace("businessType", businessType).replace("businessIdea", idea).replace("businessFunding", funding).replace("businessLocation", location);
+
+    winston.info("userQuery: " + userQuery);
+
+    const options = {
+        method: 'POST',
+        url: 'https://api.perplexity.ai/chat/completions',
+        headers: {
+            'Authorization': `Bearer ${apiKeys["perplexity"]}`, // Replace <token> with your actual token
+            'Content-Type': 'application/json',
+        },
+        data: {
+            model: 'llama-3.1-sonar-small-128k-online',
+            messages: [
+                { role: 'user', content: userQuery }
+            ],
+            temperature: 0.2,
+            top_p: 0.9,
+            return_citations: true,
+            search_domain_filter: ['perplexity.ai'],
+            return_images: false,
+            return_related_questions: false,
+            search_recency_filter: 'month',
+            top_k: 0,
+            stream: false,
+            presence_penalty: 0,
+            frequency_penalty: 1
+        }
+    };
+
+    axios(options)
+        .then(response => {
+            const choices = response.data.choices;
+            let content = "No content received";
+            if (choices.length > 0) {
+                content = choices[0].message.content;
+            }
+            winston.info("Content: " + content);
+            res.json({content: content});
+        })
+        .catch(error => {
+            console.error('Error calling Perplexity AI:', error.response ? error.response.data : error.message);
+        });
 });
 
 http.listen(HTTP_PORT, function() {
