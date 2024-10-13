@@ -45,7 +45,7 @@
         const fundingValue = document.querySelector('#funding').value;
 
         try {
-            const response = await fetch('/api/extrainfo', {
+            const response = await fetch('/api/extraInfo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

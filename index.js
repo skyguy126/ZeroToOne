@@ -23,8 +23,6 @@ const db = low(adapter);
 
 db.defaults({ requests: {} }).write();
 
-winston.info("KindoApi Key: " + apiKeys["kindoai"]);
-
 // logging middleware
 app.use(morgan('short', {stream: winston.stream}));
 
@@ -85,7 +83,7 @@ app.post('/api/idea', function(req, res) {
     res.end();
 });
 
-app.post('/api/extrainfo', function(req, res) {
+app.post('/api/extraInfo', function(req, res) {
     let guid = req.cookies.guid;
     if (!guid) {
         winston.error("Missing guid cookie!");
@@ -94,17 +92,21 @@ app.post('/api/extrainfo', function(req, res) {
         return;
     }
 
-    winston.info("/api/idea GUID: " + guid);
+    winston.info("/api/extraInfo GUID: " + guid);
     winston.info(JSON.stringify(req.body));
+
+    //
+    // Store the extra info in the db.
+    //
 
     db.set(`requests.${guid}.input.businessType`, req.body.businesstype).write();
     db.set(`requests.${guid}.input.funding`, req.body.funding).write();
-    
-    // target revenue
-    // city (from map)
-    // Type of business (dropdown)
-    // estimated startup budget
-    // how will you fund your startup? loans, self-funding, crowdfunding, etc
+
+    //
+    // This is the last API call so at this point we
+    // have all of the information we need to start
+    // generating.
+    //
 
     res.status(200);
     res.end();
@@ -118,6 +120,10 @@ app.post('/api/location', function(req, res) {
         res.end();
         return;
     }
+
+    //
+    // Store the extra location data in the db.
+    //
 
     winston.info("/api/location GUID: " + guid);
     winston.info(JSON.stringify(req.body));
