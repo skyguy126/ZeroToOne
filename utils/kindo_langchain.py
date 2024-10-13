@@ -29,7 +29,7 @@ import requests
 import json
 import sys
 
-apiKeys = {}
+apiKeys = None
 with open('../apikeys.json', 'r') as f:
     apiKeys = json.loads(f.read())
 
