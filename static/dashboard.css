@@ -108,9 +108,17 @@ ul li:hover {
 
 p {
     font-size: 14px;
+    transition: all 0.5s ease;
 }
 
 i {
     padding-left: 10px;
     font-size: 13px;
+}
+
+#trailer p {
+    font-size: 14px;
+    margin-top: 70px;
+    margin-left: 35px;
+    max-width: 80%;
 }

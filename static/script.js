@@ -6,11 +6,11 @@
     const businessQuestionsForm = document.querySelector("#business-questions-form");
     const page1 = document.querySelector(".page1");
 
-    async function successCallback(position) {
+    function successCallback(position) {
         const latitude = position.coords.latitude;
         const longitude = position.coords.longitude;
         console.log("lat and lon ", latitude, longitude);
-        await generateMap(latitude, longitude);
+        generateMap(latitude, longitude);
     }
 
     function errorCallback(error) {
