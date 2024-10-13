@@ -16,6 +16,8 @@ const app = express();
 const apiKeys = JSON.parse(fs.readFileSync('apikeys.json'));
 const http = require('http').Server(app);
 
+const utils = require('./utils/utils');
+
 // database stuff
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
@@ -109,6 +111,9 @@ app.post('/api/extraInfo', function(req, res) {
     // estimated startup budget
     // how will you fund your startup? loans, self-funding, crowdfunding, etc
 
+    const idea = String(db.get(`requests.${guid}.input.idea`));
+    utils.generateLogos(idea, guid, db, winston); // async call don't care about completion
+
     res.status(200);
     res.end();
 });
@@ -133,6 +138,22 @@ app.post('/api/location', function(req, res) {
 
     res.status(200);
     res.end();
+});
+
+app.get('/api/getLogos', function(req, res) {
+    const guid = req.cookies.guid;
+    if (!guid) {
+        winston.error("Missing guid cookie!");
+        res.status(400);
+        res.end();
+        return;
+    }
+
+    //
+    // check db to see if image paths exist, if so then return
+    // otherwise return http try again.
+    //
+    
 });
 
 app.get('/getMapbox', function(req, res) {

@@ -31,7 +31,7 @@ import json
 import sys
 
 apiKeys = None
-with open('../apikeys.json', 'r') as f:
+with open('./apikeys.json', 'r') as f:
     apiKeys = json.loads(f.read())
 
 url = "https://llm.kindo.ai/v1/chat/completions"
@@ -153,7 +153,8 @@ def query_openai_with_llamaindex_and_custom_model(idea, top_k=5):
     # Step 3: Use your custom model with the Pinecone context as input
     input_msg = ChatMessage.from_str(
         f"Write a logo generation prompt with less than 50 words for the Stable Diffusion model, "
-        f"that emphasizes {idea}. Make sure the logo is extremely simple and uses pastel colors."
+        f"that emphasizes {idea}. Make sure the logo is extremely simple, uses pastel colors, 2D, and flat."
+        f"Put heavy emphasis on simplicity so that it can be recreated in a vector graphics format."
         f"Here is some context on how good stable diffusion prompts are structured: {context_text}"
     )
 
@@ -175,6 +176,7 @@ parser = argparse.ArgumentParser(description="Generate logos.")
 # Add the arguments
 parser.add_argument("prompt", type=str, help="prompt")
 parser.add_argument("guid", type=str, help="guid")
+parser.add_argument("output_folder", type=str, help="output_folder")
 
 # Parse the arguments
 args = parser.parse_args()
@@ -202,16 +204,24 @@ print("raw_prompt_json:", json.dumps(raw_prompt_json))
 # print("raw_prompt_json:", json.dumps(raw_prompt_json))
 
 # create new folder to store the logos by guid
-new_path = "../static/logos/" + args.guid
+new_path = args.output_folder
 if not os.path.exists(new_path):
     os.makedirs(new_path)
-
 
 # call into stability ai
 stability_ai_apikey = "Bearer " + apiKeys['stablediffusion']
 
 for i, style in enumerate(['low-poly', 'line-art', 'digital-art']):
     print("Generating", i, style)
+    
+    data={
+        "prompt": raw_prompt_json["prompt"],
+        "output_format": "png",
+        "negative_prompt": "photorealism, humans, complexity, complex, 3D"
+    }
+
+    if style != "digital-art":
+        data["style_preset"] = style
 
     response = requests.post(
         f"https://api.stability.ai/v2beta/stable-image/generate/core",
@@ -220,18 +230,15 @@ for i, style in enumerate(['low-poly', 'line-art', 'digital-art']):
             "accept": "image/*"
         },
         files={"none": ''},
-        data={
-            "prompt": raw_prompt_json["prompt"],
-            "output_format": "png",
-            "negative_prompt": "photorealism, humans, complexity, complex",
-            "style_preset": "low-poly"
-        },
+        data=data
     )
 
     save_path = new_path + "/" + str(i) + ".png"
 
     if response.status_code == 200:
-        with open(save_path, 'wb') as file:
+        print("Success!")
+        print(os.path.abspath(save_path))
+        with open(os.path.abspath(save_path), 'wb') as file:
             file.write(response.content)
     else:
-        print(str(response.json()))
+        print("Error", str(response.json()))
