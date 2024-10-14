@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    prompt = "Generate a list of VCs near " + args.location + " to fund a " + args.idea + " business. Take note of the location " + args.location + " and give reasoning as to why each VC would be a good fit."
+    prompt = "Generate a list of VCs in " + args.location + " to fund a " + args.idea + " business. Take note of the location " + args.location + " and give reasoning as to why each VC would be a good fit. If some data is unavailable, set the field to an empty string."
 
     sllm = llm.as_structured_llm(output_cls=VCQuery)
     input_msg = ChatMessage.from_str(prompt)

@@ -64,6 +64,7 @@ main {
 .images {
     display: flex;
     align-items: center;
+    padding-left: 20px;
 }
 
 #images {
@@ -76,6 +77,8 @@ main {
     width: 30%;
     margin: 4px;
     min-width: 100px;
+    max-width:35px !important;
+    padding-top: 60px !important;
 }
 
 .header {

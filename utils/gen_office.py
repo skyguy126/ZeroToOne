@@ -113,8 +113,8 @@ class Office(BaseModel):
 
     name: str
     location: str
-    rent: int
-    square_footage: int
+    rent: str
+    square_footage: str
 
 class OfficeSpaces(BaseModel):
     office_spaces: List[Office]
@@ -130,7 +130,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    prompt = "Generate a few for-lease office spaces near " + args.location + ". Fetch the name, location, rent per month, and square footage. If some data is unavailable, mark the field with the string 'n/a'."
+    prompt = "Generate for-lease office spaces near " + args.location + ". You don't need to query a live database, try your best with what you have. Try to fill in the schema best you can and if some data is unavailable, set the field to an empty string."
 
     sllm = llm.as_structured_llm(output_cls=OfficeSpaces)
     input_msg = ChatMessage.from_str(prompt)
