@@ -2,7 +2,7 @@
 
 ## Built for Cerebral Beach Hacks 2024 <> [Devpost](https://devpost.com/software/zero-to-one?ref_content=user-portfolio&ref_feature=in_progress)
 
-### Stop wasting weeks launching your business or startup. Our platform provides VC contacts, office space, competition and funding analysis, and logo inspiration—all by entering just a few basic details.
+#####  Stop wasting weeks launching your business or startup. Our platform provides VC contacts, office space, competition and funding analysis, and logo inspiration—all by entering just a few basic details.
 
 -----
 
